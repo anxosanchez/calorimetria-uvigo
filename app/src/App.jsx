@@ -308,13 +308,14 @@ export default function App() {
   const [agitated, setAgitated]   = useState(false);
 
   // Persist finished results into history
-  if (
-    state.status === 'finished' &&
-    state.results &&
-    history[config.reactionType] !== state.results
-  ) {
-    setHistory(prev => ({ ...prev, [config.reactionType]: state.results }));
-  }
+  React.useEffect(() => {
+    if (state.status === 'finished' && state.results) {
+      setHistory(prev => {
+        if (prev[state.results.reaction] === state.results) return prev;
+        return { ...prev, [state.results.reaction]: state.results };
+      });
+    }
+  }, [state.status, state.results]);
 
   const allDone  = history.R1 && history.R2 && history.R3;
   const canPrint = !!allDone;
